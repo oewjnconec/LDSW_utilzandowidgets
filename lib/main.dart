@@ -10,12 +10,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Movie Catalog',
+      title: 'CineSnap',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Movie Catalog'),
+      home: const MyHomePage(title: 'CineSnap'),
     );
   }
 }
@@ -31,9 +31,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Map<String, String>> movies = [
-    {"title": "Movie 1", "description": "Description of movie 1"},
-    {"title": "Movie 2", "description": "Description of movie 2"},
-    {"title": "Movie 3", "description": "Description of movie 3"},
+    {"title": "Película 1", "description": "Descripción de la película 1"},
+    {"title": "Película 2", "description": "Descripción de la película 2"},
+    {"title": "Película 3", "description": "Descripción de la película 3"},
   ];
 
   @override
@@ -42,34 +42,55 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: ListView.builder(
-        itemCount: movies.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: const EdgeInsets.all(10),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.deepPurple[50],
-              border: Border.all(color: Colors.deepPurple),
-              borderRadius: BorderRadius.circular(10),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/fondo.jpg',
+              fit: BoxFit.cover,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  movies[index]['title']!,
-                  style: const TextStyle(
-                    fontSize: 20,
+          ),
+          ListView(
+            padding: const EdgeInsets.all(10),
+            children: [
+              Center(
+                child: Text(
+                  '¡Bienvenido a CineSnap!',
+                  style: TextStyle(
+                    color: Colors.blue[100], // Color similar a AliceBlue
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 5),
-                Text(movies[index]['description']!),
-              ],
-            ),
-          );
-        },
+              ),
+              const SizedBox(height: 20),
+              ...movies.map((movie) => Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.deepPurple[50]?.withOpacity(0.8),
+                  border: Border.all(color: Colors.deepPurple),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      movie['title']!,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(movie['description']!),
+                  ],
+                ),
+              )).toList(),
+            ],
+          ),
+        ],
       ),
     );
-  }
+  } 
 }
