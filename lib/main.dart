@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';  // Importa Flutter Material Design
+import 'package:http/http.dart' as http; // Importa la librería http para solicitudes HTTP
+import 'dart:convert';  // Para decodificar la respuesta JSON
 
 void main() {
   runApp(const MyApp());
@@ -35,6 +37,36 @@ class _MyHomePageState extends State<MyHomePage> {
     {"title": "Película 2", "description": "Descripción de la película 2"},
     {"title": "Película 3", "description": "Descripción de la película 3"},
   ];
+
+  String pokemonName = '';
+  String pokemonImageUrl = '';
+
+  Future<void> fetchPokemonData() async {
+    final String apiUrl = 'https://pokeapi.co/api/v2/pokemon/1';  // Pokémon 1: Bulbasaur
+
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        setState(() {
+          pokemonName = data['name'];  // Nombre del Pokémon
+          pokemonImageUrl = data['sprites']['front_default'];  // Imagen del Pokémon
+        });
+      } else {
+        throw Exception('Error al cargar datos del Pokémon');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPokemonData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,10 +119,33 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               )).toList(),
+
+              const SizedBox(height: 40),
+              if (pokemonName.isNotEmpty && pokemonImageUrl.isNotEmpty)
+                Column(
+                  children: [
+                    Text(
+                      'Pokémon Aleatorio',
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: Colors.blue[100],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Image.network(pokemonImageUrl), // Imagen del Pokémon
+                    Text(
+                      pokemonName[0].toUpperCase() + pokemonName.substring(1), // Capitaliza el nombre
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.blue[100]),
+                    ),
+                  ],
+                )
+              else
+                const Center(child: CircularProgressIndicator()),  // Cargando si no hay datos aún
             ],
           ),
         ],
       ),
     );
-  } 
+  }
 }
